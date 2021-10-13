@@ -1,0 +1,17 @@
+db.parts.insertMany([
+	{itemName: 'cowl', category: 'engine', price: 12500, inStock: 17},
+	{itemName: 'pump', category: 'hydraulics', price: 7800, inStock: 4},
+	{itemName: 'pylon', category: 'engine', price: 108000, inStock: 7},
+	{itemName: 'reservoir', category: 'hydraulics', price: 4000, inStock: 1},
+])
+
+db.parts.aggregate(
+	{ $project: { itemName: 1, category: 1, total: { $multiply: ["$price", "$inStock"] } } },
+	{ $group: { '_id': '$category', 'total': { $sum: '$total'} } }
+)
+
+db.parts.updateMany(
+	{}, { $inc: { inStock: -1 } }
+)
+
+db.parts.find().sort( { 'price': -1 } ).limit(2)
